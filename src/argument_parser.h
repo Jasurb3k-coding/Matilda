@@ -1,6 +1,5 @@
 #pragma once
 
-// CLRFY: Why should i include string?
 #include <string>
 
 enum Command {
