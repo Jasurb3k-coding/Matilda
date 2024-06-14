@@ -56,9 +56,9 @@ void BMPImage::read_pixels() {
 }
 
 void BMPImage::remove_red() {
-//    for (auto &pixel: pixel_data) {
-//        pixel[0] = 0;
-//    }
+    for (auto &pixel: pixel_data) {
+        pixel[0] = 0;
+    }
 }
 
 void BMPImage::write_pixels() {
