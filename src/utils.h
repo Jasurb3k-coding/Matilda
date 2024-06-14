@@ -14,4 +14,9 @@ auto check_file_has_permissions(const std::string &image_path, const int &requir
 
 void check_file_is_supported(const std::string &file_path);
 
+void display_image_info(const std::string &file_path);
+
+template<typename TP>
+tm *to_local_time(TP tp);
+
 auto print_help() -> void;
