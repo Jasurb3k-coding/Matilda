@@ -2,10 +2,11 @@
 #include <fmt/ostream.h>
 #include <iostream>
 #include "bmp.h"
-#include "../utils.h"
 
 BMPImage::BMPImage(const std::string &filePath) : file_path(filePath) {
     read_bmp();
+    remove_red();
+    write_pixels();
 }
 
 void BMPImage::encrypt() const {
@@ -26,19 +27,17 @@ void BMPImage::read_bmp() {
     file.read(reinterpret_cast<char *>(&bmp_info_header), sizeof(bmp_info_header));
     file.seekg(bmp_header.data_offset, std::fstream::beg);
 
-    pixel_data.resize(bmp_info_header.image_size);
-    file.read(reinterpret_cast<char *>(pixel_data.data()), (long) pixel_data.size());
     read_pixels();
 }
 
 void BMPImage::read_pixels() {
     auto file = open_file();
-    auto pixels_starting_position = bmp_header.data_offset;
-    auto total_number_of_pixels = bmp_info_header.width * bmp_info_header.height;
+    pixels_starting_position = bmp_header.data_offset;
+    total_number_of_pixels = bmp_info_header.width * bmp_info_header.height;
 
-    auto pixel_size = bmp_info_header.bits_per_pixel / 8;
-    bool is_rgb_pixel = pixel_size % 3 == 0;
-    auto color_count = is_rgb_pixel ? 3 : 4;
+    pixel_size = bmp_info_header.bits_per_pixel / 8;
+    is_rgb = pixel_size % 3 == 0;
+    color_count = is_rgb ? 3 : 4;
 
     uint8_t pixels[total_number_of_pixels][color_count];
 
@@ -47,8 +46,38 @@ void BMPImage::read_pixels() {
 
     std::fstream out = std::fstream("input.txt", std::ios::trunc | std::ios::out);
     for (int64_t i = 0; i < total_number_of_pixels; i++) {
-        fmt::println(out, "{} {} {}", pixels[i][0], pixels[i][1], pixels[i][2]);
+        pixel_data.reserve(total_number_of_pixels);
+        auto &red = pixels[i][0];
+        auto &green = pixels[i][1];
+        auto &blue = pixels[i][2];
+        const auto &alpha = is_rgb ? 0 : pixels[i][3];
+        pixel_data.push_back({red, green, blue, alpha});
     }
+}
+
+void BMPImage::remove_red() {
+//    for (auto &pixel: pixel_data) {
+//        pixel[0] = 0;
+//    }
+}
+
+void BMPImage::write_pixels() {
+
+    auto file = open_file(std::ios::in | std::ios::out);
+
+    uint8_t pixels[total_number_of_pixels][color_count];
+    file.seekg(pixels_starting_position, std::fstream::beg);
+
+    for (int i = 0; i < total_number_of_pixels; ++i) {
+        pixels[i][0] = pixel_data[i][0];
+        pixels[i][1] = pixel_data[i][1];
+        pixels[i][2] = pixel_data[i][2];
+        if (is_rgb) {
+            pixels[i][3] = pixel_data[i][3];
+        }
+    }
+    file.write(reinterpret_cast<char *>(&pixels), bmp_info_header.image_size);
+    file.close();
 }
 
 std::fstream BMPImage::open_file(const int &mode) {

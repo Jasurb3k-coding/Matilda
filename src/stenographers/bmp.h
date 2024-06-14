@@ -23,16 +23,6 @@ struct BMPInfoHeader {
     uint32_t important_colors;
 };
 
-struct RGBPixel {
-    int red;
-    int green;
-    int blue;
-};
-
-struct RGBAPixel : RGBPixel {
-    int alpha;
-};
-
 #pragma pack(pop)
 
 struct BMPImage {
@@ -49,7 +39,18 @@ struct BMPImage {
 private:
     BMPHeader bmp_header{};
     BMPInfoHeader bmp_info_header{};
-    std::vector<RGBPixel *> pixel_data{};
+    std::vector<std::array<int, 4>> pixel_data{};
+
+    bool is_rgb{};
+    uint32_t pixels_starting_position{};
+    int32_t total_number_of_pixels{};
+    int pixel_size{};
+    int color_count{};
+
+    void remove_red();
+
+    void write_pixels();
+
 
     void read_bmp();
 
