@@ -1,6 +1,8 @@
 #include <fmt/core.h>
 #include <fmt/color.h>
-
+#include <filesystem>
+#include "utils.h"
+#include "exceptions.h"
 
 auto red_text(const std::string &text) -> std::string {
     auto red_color = 0xFF0000;
@@ -13,6 +15,22 @@ auto println_red(const std::string &text) -> void {
 }
 
 auto SUPPORTED_IMAGE_FORMATS = std::vector<std::string>{".png", ".jpg"};
+
+
+auto validate_image_path(const std::string &image_path) -> void {
+    check_file_exists(image_path);
+//    check_file_has_access(image_path, image_access);
+//    check_file_is_supported(image_path);
+}
+
+void check_file_exists(const std::string &file_path) {
+    auto path = std::filesystem::path(file_path);
+    auto file_exists = std::filesystem::exists(file_path);
+    if (!file_exists) error_file_does_not_exist(path);
+
+    auto is_regular_file = std::filesystem::is_regular_file(path);
+    if (!is_regular_file) error_not_a_regular_file(path);
+}
 
 
 auto print_help() -> void {
