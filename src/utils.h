@@ -16,6 +16,8 @@ void check_file_is_supported(const std::string &file_path);
 
 void display_image_info(const std::string &file_path);
 
+auto get_image_dimensions(const std::string &file_path) -> std::pair<int, int>;
+
 template<typename TP>
 tm *to_local_time(TP tp);
 

@@ -6,7 +6,7 @@
 #include <fstream>
 #include "utils.h"
 #include "exceptions.h"
-#include <time.h>
+#include "stenographers/bmp.h"
 
 auto red_text(const std::string &text) -> std::string {
     auto red_color = 0xFF0000;
@@ -52,15 +52,21 @@ void check_file_is_supported(const std::string &file_path) {
 
 void display_image_info(const std::string &file_path) {
     auto path = std::filesystem::path(file_path);
+    auto bmp_image = BMPImage(path);
+
+    auto file_name = path.filename().string();
+    auto file_extension = path.extension().string();
+
     std::uintmax_t image_size_in_bytes = std::filesystem::file_size(path);
     double image_size_in_mb = image_size_in_bytes / 1024.0 / 1024.0;
 
-    auto file_extension = path.extension().string();
 
     auto last_modified_date = to_local_time(std::filesystem::last_write_time(path));
 
+    fmt::println("File: {} ", file_name);
     fmt::println("Format: {} ", file_extension);
     fmt::println("Image Size: {:.3f} MB", image_size_in_mb);
+    fmt::println("Dimensions, {}x{}", bmp_image.get_width(), bmp_image.get_height());
     fmt::println("Last Modified: {:%Y-%m-%d %H:%M:%S}", *last_modified_date);
 }
 

@@ -23,5 +23,7 @@ add_executable(Matilda main.cpp
         src/exceptions.h
         src/utils.h
         src/utils.cpp
+        src/stenographers/bmp.cpp
+        src/stenographers/bmp.h
 )
 target_link_libraries(Matilda fmt)
