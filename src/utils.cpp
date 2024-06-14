@@ -21,7 +21,7 @@ auto SUPPORTED_IMAGE_FORMATS = std::vector<std::string>{".png", ".jpg"};
 auto validate_image_path(const std::string &image_path, const int &required_access) -> void {
     check_file_exists(image_path);
     check_file_has_permissions(image_path, required_access);
-//    check_file_is_supported(image_path);
+    check_file_is_supported(image_path);
 }
 
 void check_file_exists(const std::string &file_path) {
@@ -35,8 +35,15 @@ void check_file_exists(const std::string &file_path) {
 
 void check_file_has_permissions(const std::string &file_path, const int &required_permissions) {
     auto file = std::fstream(file_path, required_permissions);
-
     if (!file.is_open()) error_file_does_not_have_permission(file_path);
+}
+
+void check_file_is_supported(const std::string &file_path) {
+    auto path = std::filesystem::path(file_path);
+    auto file_extension = path.extension().string();
+    if(std::find(SUPPORTED_IMAGE_FORMATS.begin(), SUPPORTED_IMAGE_FORMATS.end(), file_extension) != SUPPORTED_IMAGE_FORMATS.end()) {
+        error_not_supported_image_type(file_extension);
+    }
 }
 
 auto print_help() -> void {
