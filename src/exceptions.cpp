@@ -33,3 +33,9 @@ auto error_not_a_regular_file(const std::string &file_path) -> void {
     println_red(message);
     exit(NOT_A_REGULAR_FILE);
 }
+
+auto error_file_does_not_have_permission(const std::string &file_path) -> void {
+    auto message = fmt::format("{} does not have enough permissions", file_path);
+    println_red(message);
+    exit(NOT_A_REGULAR_FILE);
+}

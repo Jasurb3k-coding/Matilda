@@ -1,6 +1,7 @@
 #include <fmt/core.h>
 #include <fmt/color.h>
 #include <filesystem>
+#include <fstream>
 #include "utils.h"
 #include "exceptions.h"
 
@@ -17,9 +18,9 @@ auto println_red(const std::string &text) -> void {
 auto SUPPORTED_IMAGE_FORMATS = std::vector<std::string>{".png", ".jpg"};
 
 
-auto validate_image_path(const std::string &image_path) -> void {
+auto validate_image_path(const std::string &image_path, const int &required_access) -> void {
     check_file_exists(image_path);
-//    check_file_has_access(image_path, image_access);
+    check_file_has_permissions(image_path, required_access);
 //    check_file_is_supported(image_path);
 }
 
@@ -32,6 +33,11 @@ void check_file_exists(const std::string &file_path) {
     if (!is_regular_file) error_not_a_regular_file(path);
 }
 
+void check_file_has_permissions(const std::string &file_path, const int &required_permissions) {
+    auto file = std::fstream(file_path, required_permissions);
+
+    if (!file.is_open()) error_file_does_not_have_permission(file_path);
+}
 
 auto print_help() -> void {
     auto supported_image_formats_str = fmt::format("{}", fmt::join(SUPPORTED_IMAGE_FORMATS, ", "));
