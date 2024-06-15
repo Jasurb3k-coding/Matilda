@@ -18,7 +18,11 @@ void BMPImage::encrypt(const std::string &message) {
     int pixel = 0;
     int color = 0;
     for (int i = 0; i < encrypted.size(); i += secret_size_per_pixel) {
+        if (i>encrypted.size()-10){
+
+        }
         replaceLSBs(pixel_data[pixel][color], encrypted.substr(i, secret_size_per_pixel));
+
         if (++color == 3) {
             color = 0;
             pixel++;
@@ -42,6 +46,7 @@ std::string BMPImage::decrypt() {
 
 int BMPImage::replaceLSBs(int &value, const std::string &bitmap_str) {
     int bitmap = std::stoi(bitmap_str, nullptr, 2);
+    bitmap <<= (secret_size_per_pixel - bitmap_str.size());
     int mask = ~((1 << secret_size_per_pixel) - 1);
     value = (value & mask) | (bitmap & ~mask);
     return value;
@@ -68,13 +73,16 @@ auto BMPImage::get_string_from_bitset(const std::string &binaryString) -> std::s
 
 std::string BMPImage::get_LSB_string_from_pixel_data() {
     std::string result = "";
+    std::string ev = "";
 //    EOL:                         "11011010110010101101111010111010"
+//                               "01110110101100101011011110101110"
 //                                 "11011010110010101101111010111001"
     auto color = 0;
     for (int i = 0; i < pixel_data.size();) {
         std::bitset<8> binary(pixel_data[i][color]);
+        ev += binary.to_string();
         result += binary.to_string().substr(8 - secret_size_per_pixel);
-        if (result.size() > 56) {
+        if (result.size() > 52) {
 
         }
         if (result.size() >= eol.length()) {
@@ -146,8 +154,6 @@ void BMPImage::write_pixels() {
 
     uint8_t pixels[total_number_of_pixels][color_count];
     file.seekg(pixels_starting_position, std::fstream::beg);
-    std::fstream out = std::fstream("input.txt", std::ios::trunc | std::ios::out);
-
     for (int i = 0; i < total_number_of_pixels; ++i) {
         pixels[i][0] = pixel_data[i][0];
         pixels[i][1] = pixel_data[i][1];
@@ -155,7 +161,6 @@ void BMPImage::write_pixels() {
         if (is_rgb) {
             pixels[i][3] = pixel_data[i][3];
         }
-        fmt::println(out, "{} {} {} {}", pixel_data[i][0], pixel_data[i][1], pixel_data[i][2], pixel_data[i][3]);
     }
     file.write(reinterpret_cast<char *>(&pixels), bmp_info_header.image_size);
     file.close();
