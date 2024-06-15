@@ -2,46 +2,47 @@
 #include <fmt/ostream.h>
 #include <iostream>
 #include "bmp.h"
+#include "../exceptions.h"
 #include <string>
+#include <algorithm>
 
 std::string eol = std::bitset<32>(0b11011010110010101101111010111010).to_string();
 
 BMPImage::BMPImage(const std::string &filePath) : file_path(filePath) {
     read_bmp();
-    encrypt("hi");
-    write_pixels();
-    decrypt();
 }
 
 void BMPImage::encrypt(const std::string &message) {
     auto encrypted = get_bitset_from_string(message);
-
     encrypted += eol;
     int pixel = 0;
     int color = 0;
-    for (int i = 0; i < encrypted.size(); i += secret_size_per_pixel, pixel++) {
+    for (int i = 0; i < encrypted.size(); i += secret_size_per_pixel) {
         replaceLSBs(pixel_data[pixel][color], encrypted.substr(i, secret_size_per_pixel));
-        if (++color == 3) color = 0;
+        if (++color == 3) {
+            color = 0;
+            pixel++;
+        }
+    }
+    write_pixels();
+
+//    Validate written message
+    read_bmp();
+    auto written_message = decrypt();
+    if (written_message != message) {
+        error_write_failed();
     }
 }
 
-void BMPImage::fill_LSBs_with_zero() {
-    for (int i = 0, color = 0; i < pixel_data.size(); ++i, ++color) {
-        if (color == 3) color = 0;
-        replaceLSBs(pixel_data[i][color], std::string(secret_size_per_pixel, '0'));
-    }
-}
-
-void BMPImage::decrypt() {
+std::string BMPImage::decrypt() {
     auto lsb = get_LSB_string_from_pixel_data();
     auto message = get_string_from_bitset(lsb);
-    fmt::println("DECRYPT: {}", message);
+    return message;
 }
 
 int BMPImage::replaceLSBs(int &value, const std::string &bitmap_str) {
     int bitmap = std::stoi(bitmap_str, nullptr, 2);
-    u_long bitmap_size = bitmap_str.size();
-    int mask = ~((1 << bitmap_size) - 1);
+    int mask = ~((1 << secret_size_per_pixel) - 1);
     value = (value & mask) | (bitmap & ~mask);
     return value;
 }
@@ -67,16 +68,28 @@ auto BMPImage::get_string_from_bitset(const std::string &binaryString) -> std::s
 
 std::string BMPImage::get_LSB_string_from_pixel_data() {
     std::string result = "";
-
+//    EOL:                         "11011010110010101101111010111010"
+//                                 "11011010110010101101111010111001"
     auto color = 0;
-    for (int i = 0; i < pixel_data.size(); ++i) {
+    for (int i = 0; i < pixel_data.size();) {
         std::bitset<8> binary(pixel_data[i][color]);
         result += binary.to_string().substr(8 - secret_size_per_pixel);
-        if (result.ends_with(eol)) {
-            result.erase(result.length() - eol.length(), eol.length());
-            break;
+        if (result.size() > 56) {
+
         }
-        if (++color == 3) color = 0;
+        if (result.size() >= eol.length()) {
+            auto div = result.size() % 8 % 3;
+            auto possible_eol = result.substr(std::max((int) (result.size() - eol.length() - div), 0), eol.length());
+            if (possible_eol == eol) {
+                result.erase(result.length() - eol.length() - div, eol.length() + div);
+                break;
+            }
+        }
+
+        if (++color == 3) {
+            color = 0;
+            i++;
+        }
     }
 
     return result;

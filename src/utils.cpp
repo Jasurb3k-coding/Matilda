@@ -13,6 +13,11 @@ auto red_text(const std::string &text) -> std::string {
     return fmt::format(fg(fmt::color(red_color)), text);
 }
 
+auto green_text(const std::string &text) -> std::string {
+    auto red_color = 0x00FF00;
+    return fmt::format(fg(fmt::color(red_color)), text);
+}
+
 auto println_red(const std::string &text) -> void {
     auto message = red_text(text);
     fmt::println("{}", message);
@@ -70,6 +75,20 @@ void display_image_info(const std::string &file_path) {
     fmt::println("Last Modified: {:%Y-%m-%d %H:%M:%S}", *last_modified_date);
 }
 
+void encrypt_message(const std::string &file_path, const std::string &message) {
+    auto path = std::filesystem::path(file_path);
+    auto bmp_image = BMPImage(path);
+    bmp_image.encrypt(message);
+    fmt::println("{}", green_text("Message Encrypted Successfully"));
+}
+
+void decrypt_message(const std::string &file_path) {
+    auto path = std::filesystem::path(file_path);
+    auto bmp_image = BMPImage(path);
+    auto message = bmp_image.decrypt();
+    fmt::println("{}", green_text("Message Decrypted Successfully. Message:"));
+    fmt::println("{}", message);
+}
 template<typename TP>
 tm *to_local_time(TP tp) {
     using namespace std::chrono;

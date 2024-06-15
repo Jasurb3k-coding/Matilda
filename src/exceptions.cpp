@@ -6,6 +6,7 @@ enum EXCEPTION_CODE {
     WRONG_NUMBER_OF_ARGUMENTS = 2,
     FILE_DOES_NOT_EXIST = 3,
     NOT_A_REGULAR_FILE = 4,
+    WRITE_FAILED = 5,
 };
 
 auto try_help_text = "Use -h to see available commands.";
@@ -44,4 +45,10 @@ auto error_not_supported_image_type(const std::string &image_type) -> void {
     auto message = fmt::format("{} image type is currently not supported", image_type);
     println_red(message);
     exit(NOT_A_REGULAR_FILE);
+}
+
+auto error_write_failed() -> void {
+    auto message = fmt::format("There has been an error while writing the message");
+    println_red(message);
+    exit(WRITE_FAILED);
 }

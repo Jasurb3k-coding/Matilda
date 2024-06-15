@@ -11,3 +11,5 @@ auto error_not_a_regular_file(const std::string &file_path) -> void;
 auto error_file_does_not_have_permission(const std::string &file_path) -> void;
 
 auto error_not_supported_image_type(const std::string &image_type) -> void;
+
+auto error_write_failed() -> void;
