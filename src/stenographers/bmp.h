@@ -36,10 +36,19 @@ struct BMPImage {
 
     void encrypt(const std::string &message);
 
+    void decrypt();
+
 private:
     BMPHeader bmp_header{};
     BMPInfoHeader bmp_info_header{};
     std::vector<std::array<int, 4>> pixel_data{};
+
+    static auto get_bitset_from_string(const std::string &input) -> std::string;
+    std::string get_LSB_string_from_pixel_data();
+    auto get_string_from_bitset(const std::string& binaryString) -> std::string;
+
+    int replaceLSBs(int &value, const std::string &bitmap_str);
+    void fill_LSBs_with_zero();
 
     bool is_rgb{};
     uint32_t pixels_starting_position{};

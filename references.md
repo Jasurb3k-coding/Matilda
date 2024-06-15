@@ -55,3 +55,6 @@ tm *to_local_time(TP tp) {
 
 [link](https://stackoverflow.com/a/37242865)
 [more info](https://stackoverflow.com/questions/3318410/pragma-pack-effect)
+
+## 5. Bit modification
+[link](https://stackoverflow.com/questions/47981/how-to-set-clear-and-toggle-a-single-bit)
