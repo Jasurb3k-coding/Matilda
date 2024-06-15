@@ -34,7 +34,7 @@ struct BMPImage {
 
     int get_height() const;
 
-    void encrypt() const;
+    void encrypt(const std::string &message);
 
 private:
     BMPHeader bmp_header{};
@@ -45,9 +45,9 @@ private:
     uint32_t pixels_starting_position{};
     int32_t total_number_of_pixels{};
     int pixel_size{};
+    int secret_size_per_pixel{};
+    int max_secret_chars{};
     int color_count{};
-
-    void remove_red();
 
     void write_pixels();
 
