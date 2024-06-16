@@ -6,7 +6,10 @@
 #include <fstream>
 #include "utils.h"
 #include "exceptions.h"
+#include "stenographers/base.h"
 #include "stenographers/bmp.h"
+#include "stenographers/ppm.h"
+
 
 auto red_text(const std::string &text) -> std::string {
     auto red_color = 0xFF0000;
@@ -25,6 +28,18 @@ auto println_red(const std::string &text) -> void {
 
 auto SUPPORTED_IMAGE_FORMATS = std::vector<std::string>{".bmp", ".ppm"};
 
+std::unique_ptr<ImageBase> get_image(const std::filesystem::path &file_path) {
+    auto extension = file_path.extension().string();
+    std::unique_ptr<ImageBase> image = nullptr;
+
+    if (extension == ".bmp") {
+        image = std::make_unique<BMPImage>(file_path);
+    } else if (extension == ".ppm") {
+        image = std::make_unique<PPMImage>(file_path);
+    }
+    if (!image) error_image_could_not_be_created();
+    return image;
+}
 
 auto validate_image_path(const std::string &image_path, const int &required_access) -> void {
     check_file_exists(image_path);
@@ -57,10 +72,9 @@ void check_file_is_supported(const std::string &file_path) {
 
 void display_image_info(const std::string &file_path) {
     auto path = std::filesystem::path(file_path);
-    auto bmp_image = BMPImage(path);
-
     auto file_name = path.filename().string();
     auto file_extension = path.extension().string();
+    auto image = get_image(path);
 
 
     std::uintmax_t image_size_in_bytes = std::filesystem::file_size(path);
@@ -71,32 +85,32 @@ void display_image_info(const std::string &file_path) {
     fmt::println("File: {} ", file_name);
     fmt::println("Format: {} ", file_extension);
     fmt::println("Image Size: {:.3f} MB", image_size_in_mb);
-    fmt::println("Dimensions, {}x{}", bmp_image.get_width(), bmp_image.get_height());
+    fmt::println("Dimensions, {}x{}", image->get_width(), image->get_height());
     fmt::println("Last Modified: {:%Y-%m-%d %H:%M:%S}", *last_modified_date);
-    fmt::println("Max Secret characters: {}", bmp_image.get_max_secret_characters());
+    fmt::println("Max Secret characters: {}", image->get_max_secret_characters());
 }
 
 void encrypt_message(const std::string &file_path, const std::string &message) {
     auto path = std::filesystem::path(file_path);
-    auto bmp_image = BMPImage(path);
-    bmp_image.encrypt(message);
+    auto image = get_image(path);
+    image->encrypt(message);
     fmt::println("{}", green_text("Message Encrypted Successfully"));
 }
 
 void decrypt_message(const std::string &file_path) {
     auto path = std::filesystem::path(file_path);
-    auto bmp_image = BMPImage(path);
-    auto message = bmp_image.decrypt();
+    auto image = get_image(path);
+    auto message = image->decrypt();
     fmt::println("{}", green_text("Message Decrypted Successfully. Message:"));
     fmt::println("{}", message);
 }
 
 void check_message(const std::string &file_path, const std::string &message) {
     auto path = std::filesystem::path(file_path);
-    auto bmp_image = BMPImage(path);
-    bmp_image.check_if_message_can_be_written(message);
+    auto image = get_image(path);
+    image->check_if_message_can_be_written(message);
     fmt::println("{}", green_text("Message can be written"));
-    bmp_image.check_for_secret_message();
+    image->check_for_secret_message();
     fmt::println("{}", green_text("There can be a secret message"));
 }
 

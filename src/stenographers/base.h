@@ -1,7 +1,10 @@
+#pragma once
+
 #include <string>
 #include <fstream>
 #include <vector>
 #include <array>
+
 
 class ImageBase {
 public:
@@ -21,7 +24,12 @@ public:
 
     virtual std::string decrypt() = 0;
 
+    virtual ~ImageBase() = default;
+
+
 protected:
+    std::string eol = std::bitset<32>(0b11011010110010101101111010111010).to_string();
+
     const std::string &file_path;
 
     virtual void persist_pixels() = 0;

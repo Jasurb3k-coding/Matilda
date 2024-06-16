@@ -10,6 +10,7 @@ enum EXCEPTION_CODE {
     NOT_SUPPORTED_CHARACTERS = 6,
     MESSAGE_TOO_LONG = 7,
     NO_SECRET_MESSAGE = 8,
+    IMAGE_COULD_NOT_BE_CREATED = 9,
 };
 
 auto try_help_text = "Use -h to see available commands.";
@@ -78,3 +79,11 @@ auto error_no_secret_message() -> void {
     println_red(message);
     exit(NO_SECRET_MESSAGE);
 }
+
+
+auto error_image_could_not_be_created() -> void {
+    auto message = fmt::format("There has been an error: Image Could not be created");
+    println_red(message);
+    exit(IMAGE_COULD_NOT_BE_CREATED);
+}
+

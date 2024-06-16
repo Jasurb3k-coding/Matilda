@@ -6,8 +6,6 @@
 #include <string>
 #include <algorithm>
 
-std::string eol = std::bitset<32>(0b11011010110010101101111010111010).to_string();
-
 BMPImage::BMPImage(const std::string &filePath) : ImageBase(filePath) {
     read_image();
 }
@@ -96,7 +94,7 @@ auto BMPImage::get_string_from_bitset(const std::string &binaryString) -> std::s
     return text;
 }
 
-bool is_last_char_supported(const std::string &result) {
+bool BMPImage::is_last_char_supported(const std::string &result) const {
     if (result.size() < 8) return true;
     auto reminder = result.size() % 8;
     std::string latest_8_bit_segment = result.substr(result.size() - 8 - reminder, 8);

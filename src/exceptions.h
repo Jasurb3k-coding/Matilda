@@ -19,3 +19,5 @@ auto error_not_supported_characters() -> void;
 auto error_message_too_long(const int &provided_message_size, const int &max_message_size) -> void;
 
 auto error_no_secret_message() -> void;
+
+auto error_image_could_not_be_created() -> void;

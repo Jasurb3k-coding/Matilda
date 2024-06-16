@@ -1,36 +1,19 @@
 #pragma once
 
-
 #include <string>
 #include <fstream>
 #include "base.h"
 
-#pragma pack(push, 1)
-struct BMPHeader {
-    uint16_t signature;
-    uint32_t file_size;
-    uint32_t reserved;
-    uint32_t data_offset;
+struct PPMHeader {
+    int signature;
+    int width;
+    int height;
+    int number_of_colors;
 };
 
-struct BMPInfoHeader {
-    uint32_t size;
-    int32_t width;
-    int32_t height;
-    uint16_t planes;
-    uint16_t bits_per_pixel;
-    uint32_t compression;
-    uint32_t image_size;
-    uint32_t x_pixels_per_m;
-    uint32_t y_pixels_per_m;
-    uint32_t colors_used;
-    uint32_t important_colors;
-};
 
-#pragma pack(pop)
-
-struct BMPImage : public ImageBase {
-    explicit BMPImage(const std::string &filePath);
+struct PPMImage : public ImageBase {
+    explicit PPMImage(const std::string &filePath);
 
     int get_width() const override;
 
@@ -48,9 +31,8 @@ struct BMPImage : public ImageBase {
     std::string decrypt() override;
 
 private:
-    BMPHeader bmp_header{};
-    BMPInfoHeader bmp_info_header{};
-    std::vector<std::array<int, 4>> pixel_data{};
+    PPMHeader ppm_header{};
+    std::vector<std::array<int, 3>> pixel_data{};
 
     static std::string get_bitset_from_string(const std::string &input);
 
@@ -58,9 +40,9 @@ private:
 
     std::string get_string_from_bitset(const std::string &binaryString);
 
-    int replaceLSBs(int &value, const std::string &bitmap_str);
-
     bool is_last_char_supported(const std::string &result) const;
+
+    int replaceLSBs(int &value, const std::string &bitmap_str);
 
     void write_encrypted_message_into_pixels(std::string &encrypted);
 
@@ -68,13 +50,9 @@ private:
 
     void validate_message(const std::string &message) const;
 
-    bool is_rgb{};
     uint32_t pixels_starting_position{};
     int32_t total_number_of_pixels{};
-    int pixel_size{};
-    int secret_size_per_pixel{};
     int max_secret_chars{};
-    int color_count{};
 
     void persist_pixels() override;
 
