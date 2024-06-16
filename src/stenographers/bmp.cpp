@@ -5,7 +5,6 @@
 #include "../utils.h"
 #include <string>
 #include <algorithm>
-#include <fmt/ostream.h>
 
 std::string eol = std::bitset<32>(0b11011010110010101101111010111010).to_string();
 
@@ -88,15 +87,25 @@ auto BMPImage::get_string_from_bitset(const std::string &binaryString) -> std::s
     return text;
 }
 
+bool is_last_char_supported(const std::string &result) {
+    if (result.size() < 8) return true;
+    auto reminder = result.size() % 8;
+    std::string latest_8_bit_segment = result.substr(result.size() - 8 - reminder, 8);
+    char character = static_cast<char>(std::bitset<8>(latest_8_bit_segment).to_ulong());
+    auto eol_possibilities = std::vector<std::string>{
+            "11011010", "11001010", "11011110", "10111010"
+    };
+    auto is_eol_char = std::find(eol_possibilities.begin(), eol_possibilities.end(), latest_8_bit_segment) !=
+                       eol_possibilities.end();
+    return isalnum(character) || isspace(character) || is_eol_char;
+}
+
 std::string BMPImage::get_LSB_string_from_pixel_data() {
     std::string result = "";
     auto color = 0;
     for (int i = 0; i < pixel_data.size();) {
         std::bitset<8> binary(pixel_data[i][color]);
         result += binary.to_string().substr(8 - secret_size_per_pixel);
-        if (result.size() > 52) {
-
-        }
         if (result.size() >= eol.length()) {
             auto div = result.size() % 8 % 3;
             auto possible_eol = result.substr(std::max((int) (result.size() - eol.length() - div), 0), eol.length());
@@ -104,6 +113,10 @@ std::string BMPImage::get_LSB_string_from_pixel_data() {
                 result.erase(result.length() - eol.length() - div, eol.length() + div);
                 break;
             }
+        }
+
+        if (!is_last_char_supported(result)) {
+            error_no_secret_message();
         }
 
         if (++color == 3) {
@@ -138,7 +151,7 @@ void BMPImage::read_pixels() {
     total_number_of_pixels = bmp_info_header.width * bmp_info_header.height;
 
     pixel_size = bmp_info_header.bits_per_pixel / 8;
-    secret_size_per_pixel = (int) (bmp_info_header.bits_per_pixel * 0.7);
+    secret_size_per_pixel = (int) (bmp_info_header.bits_per_pixel * 0.07);
     max_secret_chars = (secret_size_per_pixel * total_number_of_pixels) / 8 - eol.size();
 
     is_rgb = pixel_size % 3 == 0;

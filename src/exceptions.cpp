@@ -9,6 +9,7 @@ enum EXCEPTION_CODE {
     WRITE_FAILED = 5,
     NOT_SUPPORTED_CHARACTERS = 6,
     MESSAGE_TOO_LONG = 7,
+    NO_SECRET_MESSAGE = 8,
 };
 
 auto try_help_text = "Use -h to see available commands.";
@@ -70,4 +71,10 @@ auto error_message_too_long(const int &provided_message_size, const int &max_mes
             provided_message_size, max_message_size, need_to_remove);
     println_red(message);
     exit(MESSAGE_TOO_LONG);
+}
+
+auto error_no_secret_message() -> void {
+    auto message = fmt::format("There could not be found a secret message in the given image");
+    println_red(message);
+    exit(NO_SECRET_MESSAGE);
 }

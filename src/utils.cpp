@@ -62,6 +62,7 @@ void display_image_info(const std::string &file_path) {
     auto file_name = path.filename().string();
     auto file_extension = path.extension().string();
 
+
     std::uintmax_t image_size_in_bytes = std::filesystem::file_size(path);
     double image_size_in_mb = image_size_in_bytes / 1024.0 / 1024.0;
 
@@ -107,7 +108,7 @@ void is_valid_message(const std::string &message) {
                 return !(isalnum(c) || isspace(c));
             }
     );
-    if (result == message.end()) error_not_supported_characters();
+    if (result != message.end()) error_not_supported_characters();
 }
 
 auto print_help() -> void {
