@@ -24,7 +24,7 @@ void BMPImage::encrypt(const std::string &message) {
 
 void BMPImage::validate_message(const std::string &message) {
     is_valid_message(message);
-    if (message.length() > max_secret_chars){
+    if (message.length() > max_secret_chars) {
         error_message_too_long(message.length(), max_secret_chars);
     };
 }
@@ -33,6 +33,11 @@ std::string BMPImage::decrypt() {
     auto lsb = get_LSB_string_from_pixel_data();
     auto message = get_string_from_bitset(lsb);
     return message;
+}
+
+
+int BMPImage::get_max_secret_characters() const {
+    return max_secret_chars;
 }
 
 void BMPImage::validate_written_image(const std::string &expected_message) {

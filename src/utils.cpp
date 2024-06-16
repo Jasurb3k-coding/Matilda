@@ -65,7 +65,6 @@ void display_image_info(const std::string &file_path) {
     std::uintmax_t image_size_in_bytes = std::filesystem::file_size(path);
     double image_size_in_mb = image_size_in_bytes / 1024.0 / 1024.0;
 
-
     auto last_modified_date = to_local_time(std::filesystem::last_write_time(path));
 
     fmt::println("File: {} ", file_name);
@@ -73,6 +72,7 @@ void display_image_info(const std::string &file_path) {
     fmt::println("Image Size: {:.3f} MB", image_size_in_mb);
     fmt::println("Dimensions, {}x{}", bmp_image.get_width(), bmp_image.get_height());
     fmt::println("Last Modified: {:%Y-%m-%d %H:%M:%S}", *last_modified_date);
+    fmt::println("Max Secret characters: {}", bmp_image.get_max_secret_characters());
 }
 
 void encrypt_message(const std::string &file_path, const std::string &message) {

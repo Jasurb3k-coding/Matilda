@@ -34,6 +34,8 @@ struct BMPImage {
 
     int get_height() const;
 
+    int get_max_secret_characters() const;
+
     void encrypt(const std::string &message);
 
     std::string decrypt();
