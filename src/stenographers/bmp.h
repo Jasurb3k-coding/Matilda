@@ -1,5 +1,6 @@
 #include <string>
 #include <fstream>
+#include "base.h"
 
 #pragma pack(push, 1)
 struct BMPHeader {
@@ -25,35 +26,34 @@ struct BMPInfoHeader {
 
 #pragma pack(pop)
 
-struct BMPImage {
-    const std::string &file_path;
-
+struct BMPImage : public ImageBase {
     explicit BMPImage(const std::string &filePath);
 
-    int get_width() const;
+    int get_width() const override;
 
-    int get_height() const;
+    int get_height() const override;
 
-    int get_max_secret_characters() const;
+    int get_max_secret_characters() const override;
 
-    void check_if_message_can_be_written(const std::string &message) const;
 
-    void check_for_secret_message() const;
+    void check_if_message_can_be_written(const std::string &message) const override;
 
-    void encrypt(const std::string &message);
+    void check_for_secret_message() const override;
 
-    std::string decrypt();
+    void encrypt(const std::string &message) override;
+
+    std::string decrypt() override;
 
 private:
     BMPHeader bmp_header{};
     BMPInfoHeader bmp_info_header{};
     std::vector<std::array<int, 4>> pixel_data{};
 
-    static auto get_bitset_from_string(const std::string &input) -> std::string;
+    static std::string get_bitset_from_string(const std::string &input);
 
     std::string get_LSB_string_from_pixel_data() const;
 
-    auto get_string_from_bitset(const std::string &binaryString) -> std::string;
+    std::string get_string_from_bitset(const std::string &binaryString);
 
     int replaceLSBs(int &value, const std::string &bitmap_str);
 
@@ -71,12 +71,11 @@ private:
     int max_secret_chars{};
     int color_count{};
 
-    void persist_pixels();
+    void persist_pixels() override;
 
+    void read_image() override;
 
-    void read_bmp();
+    std::fstream open_file(const int &mode = std::ios::in) override;
 
-    std::fstream open_file(const int &mode = std::ios::in);
-
-    void read_pixels();
+    void read_pixels() override;
 };

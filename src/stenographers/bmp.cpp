@@ -8,8 +8,8 @@
 
 std::string eol = std::bitset<32>(0b11011010110010101101111010111010).to_string();
 
-BMPImage::BMPImage(const std::string &filePath) : file_path(filePath) {
-    read_bmp();
+BMPImage::BMPImage(const std::string &filePath) : ImageBase(filePath) {
+    read_image();
 }
 
 
@@ -49,7 +49,7 @@ int BMPImage::get_max_secret_characters() const {
 }
 
 void BMPImage::validate_written_image(const std::string &expected_message) {
-    read_bmp();
+    read_image();
     auto written_message = decrypt();
     if (written_message != expected_message) {
         error_write_failed();
@@ -145,7 +145,7 @@ int BMPImage::get_height() const {
     return (int) bmp_info_header.height;
 }
 
-void BMPImage::read_bmp() {
+void BMPImage::read_image() {
     auto file = open_file();
     file.read(reinterpret_cast<char *>(&bmp_header), sizeof(bmp_header));
     file.read(reinterpret_cast<char *>(&bmp_info_header), sizeof(bmp_info_header));

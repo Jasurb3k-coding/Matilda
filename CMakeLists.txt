@@ -25,5 +25,7 @@ add_executable(Matilda main.cpp
         src/utils.cpp
         src/stenographers/bmp.cpp
         src/stenographers/bmp.h
+        src/stenographers/base.cpp
+        src/stenographers/base.h
 )
 target_link_libraries(Matilda fmt)
