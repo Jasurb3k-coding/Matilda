@@ -5,6 +5,8 @@
 #include "../utils.h"
 #include <string>
 #include <algorithm>
+#include <sstream>
+#include <fmt/ostream.h>
 
 
 PPMImage::PPMImage(const std::string &filePath) : ImageBase(filePath) {
@@ -149,53 +151,44 @@ std::string PPMImage::get_LSB_string_from_pixel_data() const {
 //    return result;
 }
 
-//
 int PPMImage::get_width() const {
-//    return (int) bmp_info_header.width;
+    return (int) ppm_header.width;
 }
 
-//
 int PPMImage::get_height() const {
-//    return (int) bmp_info_header.height;
+    return (int) ppm_header.height;
 }
 
 void PPMImage::read_image() {
     auto file = open_file();
+    std::string line;
 
-//    file.read(reinterpret_cast<char *>(&bmp_header), sizeof(bmp_header));
-//    file.read(reinterpret_cast<char *>(&bmp_info_header), sizeof(bmp_info_header));
-//    file.seekg(bmp_header.data_offset, std::fstream::beg);
+    std::getline(file, line);
+    std::istringstream iss(line);
+    iss >> ppm_header.signature;
 
+    file >> ppm_header.width >> ppm_header.height >> ppm_header.number_of_colors;
+    file.ignore();
+    file.ignore();
+
+    pixels_starting_position = file.tellg();
+    total_number_of_pixels = ppm_header.width * ppm_header.height;
+    auto secret_size_per_pixel = 3;
+    max_secret_chars = (secret_size_per_pixel * total_number_of_pixels) / 8 - eol.size();
     read_pixels();
 }
 
 //
 void PPMImage::read_pixels() {
-//    auto file = open_file();
-//    pixels_starting_position = bmp_header.data_offset;
-//    total_number_of_pixels = bmp_info_header.width * bmp_info_header.height;
-//
-//    pixel_size = bmp_info_header.bits_per_pixel / 8;
-//    secret_size_per_pixel = (int) (bmp_info_header.bits_per_pixel * 0.07);
-//    max_secret_chars = (secret_size_per_pixel * total_number_of_pixels) / 8 - eol.size();
-//
-//    is_rgb = pixel_size % 3 == 0;
-//    color_count = is_rgb ? 3 : 4;
-//
-//    uint8_t pixels[total_number_of_pixels][color_count];
-//
-//    file.seekg(pixels_starting_position, std::fstream::beg);
-//    file.read(reinterpret_cast<char *>(&pixels), bmp_info_header.image_size);
-//
-//
-//    for (int64_t i = 0; i < total_number_of_pixels; i++) {
-//        pixel_data.reserve(total_number_of_pixels);
-//        auto &red = pixels[i][0];
-//        auto &green = pixels[i][1];
-//        auto &blue = pixels[i][2];
-//        const auto &alpha = is_rgb ? 255 : pixels[i][3];
-//        pixel_data.push_back({red, green, blue, alpha});
-//    }
+    auto file = open_file();
+    file.seekg(pixels_starting_position);
+    pixel_data.reserve(total_number_of_pixels);
+
+    for (int i = 0; i < total_number_of_pixels; ++i) {
+        unsigned char rgb[3];
+        file.read(reinterpret_cast<char *>(rgb), 3);
+        pixel_data.push_back({rgb[0], rgb[1], rgb[2]});
+    }
 }
 
 void PPMImage::persist_pixels() {

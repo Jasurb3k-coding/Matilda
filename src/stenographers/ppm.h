@@ -5,7 +5,7 @@
 #include "base.h"
 
 struct PPMHeader {
-    int signature;
+    std::string signature;
     int width;
     int height;
     int number_of_colors;
