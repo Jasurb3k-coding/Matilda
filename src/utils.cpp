@@ -9,6 +9,7 @@
 #include "stenographers/base.h"
 #include "stenographers/bmp.h"
 #include "stenographers/ppm.h"
+#include "fmt/core.h"
 
 
 auto red_text(const std::string &text) -> std::string {
@@ -33,12 +34,20 @@ ImageBase *get_image(std::filesystem::path &file_path) {
     ImageBase *image = nullptr;
 
     if (extension == ".bmp") {
-        image = new BMPImage(file_path);
+        image = new BMPImage(file_path.string());
     } else if (extension == ".ppm") {
-        image = new PPMImage(file_path);
+        image = new PPMImage(file_path.string());
     }
     if (!image) error_image_could_not_be_created();
     return image;
+}
+
+void encrypt_message(const std::string &file_path, const std::string &message) {
+    auto path = std::filesystem::path(file_path);
+    auto image = get_image(path);
+    image->encrypt(message);
+    fmt::println("{}", green_text("Message Encrypted Successfully"));
+    delete image;
 }
 
 auto validate_image_path(const std::string &image_path, const int &required_access) -> void {
@@ -91,13 +100,7 @@ void display_image_info(const std::string &file_path) {
     delete image;
 }
 
-void encrypt_message(const std::string &file_path, const std::string &message) {
-    auto path = std::filesystem::path(file_path);
-    auto image = get_image(path);
-    image->encrypt(message);
-    fmt::println("{}", green_text("Message Encrypted Successfully"));
-    delete image;
-}
+
 
 void decrypt_message(const std::string &file_path) {
     auto path = std::filesystem::path(file_path);

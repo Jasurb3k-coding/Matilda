@@ -8,7 +8,7 @@
 
 class ImageBase {
 public:
-    const std::string &file_path;
+    const std::string file_path;
 
     explicit ImageBase(const std::string &filePath) : file_path(filePath) {}
 

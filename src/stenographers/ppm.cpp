@@ -6,6 +6,7 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <fmt/core.h>
 
 
 PPMImage::PPMImage(const std::string &filePath) : ImageBase(filePath) {
@@ -167,16 +168,17 @@ void PPMImage::read_image() {
 }
 
 //
-void PPMImage::read_pixels(std::fstream& file) {
-    file.seekg(pixels_starting_position);
+void PPMImage::read_pixels(std::fstream &file) {
     pixel_data.clear();
     pixel_data.reserve(total_number_of_pixels);
 
+    // P6 format (Binary)
     for (int i = 0; i < total_number_of_pixels; ++i) {
         unsigned char rgb[3];
         file.read(reinterpret_cast<char *>(rgb), 3);
         pixel_data.push_back({rgb[0], rgb[1], rgb[2]});
     }
+
 }
 
 void PPMImage::persist_pixels() {
@@ -191,5 +193,6 @@ void PPMImage::persist_pixels() {
 }
 
 std::fstream PPMImage::open_file(const int &mode) {
+//    fmt::println("{}", get_file_path());
     return std::fstream(file_path, mode | std::ios::binary);
 }
