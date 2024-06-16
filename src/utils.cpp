@@ -28,14 +28,14 @@ auto println_red(const std::string &text) -> void {
 
 auto SUPPORTED_IMAGE_FORMATS = std::vector<std::string>{".bmp", ".ppm"};
 
-std::unique_ptr<ImageBase> get_image(const std::filesystem::path &file_path) {
+ImageBase *get_image(std::filesystem::path &file_path) {
     auto extension = file_path.extension().string();
-    std::unique_ptr<ImageBase> image = nullptr;
+    ImageBase *image = nullptr;
 
     if (extension == ".bmp") {
-        image = std::make_unique<BMPImage>(file_path);
+        image = new BMPImage(file_path);
     } else if (extension == ".ppm") {
-        image = std::make_unique<PPMImage>(file_path);
+        image = new PPMImage(file_path);
     }
     if (!image) error_image_could_not_be_created();
     return image;
@@ -88,6 +88,7 @@ void display_image_info(const std::string &file_path) {
     fmt::println("Dimensions, {}x{}", image->get_width(), image->get_height());
     fmt::println("Last Modified: {:%Y-%m-%d %H:%M:%S}", *last_modified_date);
     fmt::println("Max Secret characters: {}", image->get_max_secret_characters());
+    delete image;
 }
 
 void encrypt_message(const std::string &file_path, const std::string &message) {
@@ -95,6 +96,7 @@ void encrypt_message(const std::string &file_path, const std::string &message) {
     auto image = get_image(path);
     image->encrypt(message);
     fmt::println("{}", green_text("Message Encrypted Successfully"));
+    delete image;
 }
 
 void decrypt_message(const std::string &file_path) {
@@ -103,6 +105,7 @@ void decrypt_message(const std::string &file_path) {
     auto message = image->decrypt();
     fmt::println("{}", green_text("Message Decrypted Successfully. Message:"));
     fmt::println("{}", message);
+    delete image;
 }
 
 void check_message(const std::string &file_path, const std::string &message) {
@@ -112,6 +115,7 @@ void check_message(const std::string &file_path, const std::string &message) {
     fmt::println("{}", green_text("Message can be written"));
     image->check_for_secret_message();
     fmt::println("{}", green_text("There can be a secret message"));
+    delete image;
 }
 
 template<typename TP>

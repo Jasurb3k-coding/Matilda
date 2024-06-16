@@ -149,11 +149,10 @@ void BMPImage::read_image() {
     file.read(reinterpret_cast<char *>(&bmp_info_header), sizeof(bmp_info_header));
     file.seekg(bmp_header.data_offset, std::fstream::beg);
 
-    read_pixels();
+    read_pixels(file);
 }
 
-void BMPImage::read_pixels() {
-    auto file = open_file();
+void BMPImage::read_pixels(std::fstream &file) {
     pixels_starting_position = bmp_header.data_offset;
     total_number_of_pixels = bmp_info_header.width * bmp_info_header.height;
 

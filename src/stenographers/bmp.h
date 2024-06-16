@@ -82,5 +82,5 @@ private:
 
     std::fstream open_file(const int &mode = std::ios::in) override;
 
-    void read_pixels() override;
+    void read_pixels(std::fstream &file) override;
 };

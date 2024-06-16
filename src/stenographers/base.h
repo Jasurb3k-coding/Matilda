@@ -8,6 +8,8 @@
 
 class ImageBase {
 public:
+    const std::string &file_path;
+
     explicit ImageBase(const std::string &filePath) : file_path(filePath) {}
 
     virtual int get_width() const = 0;
@@ -20,6 +22,8 @@ public:
 
     virtual void check_for_secret_message() const = 0;
 
+    std::string get_file_path() const;
+
     virtual void encrypt(const std::string &message) = 0;
 
     virtual std::string decrypt() = 0;
@@ -30,7 +34,6 @@ public:
 protected:
     std::string eol = std::bitset<32>(0b11011010110010101101111010111010).to_string();
 
-    const std::string &file_path;
 
     virtual void persist_pixels() = 0;
 
@@ -38,5 +41,5 @@ protected:
 
     virtual std::fstream open_file(const int &mode = std::ios::in) = 0;
 
-    virtual void read_pixels() = 0;
+    virtual void read_pixels(std::fstream &file) = 0;
 };

@@ -1,5 +1,7 @@
-//
-// Created by Personal Admin on 16/06/2024.
-//
 
 #include "base.h"
+#include <string>
+
+std::string ImageBase::get_file_path() const {
+    return file_path;
+}

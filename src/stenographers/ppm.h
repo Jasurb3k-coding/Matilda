@@ -53,6 +53,7 @@ private:
     uint32_t pixels_starting_position{};
     int32_t total_number_of_pixels{};
     int max_secret_chars{};
+    int secret_size_per_pixel = 2;
 
     void persist_pixels() override;
 
@@ -60,5 +61,5 @@ private:
 
     std::fstream open_file(const int &mode = std::ios::in) override;
 
-    void read_pixels() override;
+    void read_pixels(std::fstream &file) override;
 };
