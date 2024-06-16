@@ -23,7 +23,7 @@ auto println_red(const std::string &text) -> void {
     fmt::println("{}", message);
 }
 
-auto SUPPORTED_IMAGE_FORMATS = std::vector<std::string>{".png", ".jpg"};
+auto SUPPORTED_IMAGE_FORMATS = std::vector<std::string>{".bmp", ".ppm"};
 
 
 auto validate_image_path(const std::string &image_path, const int &required_access) -> void {
@@ -49,7 +49,7 @@ void check_file_has_permissions(const std::string &file_path, const int &require
 void check_file_is_supported(const std::string &file_path) {
     auto path = std::filesystem::path(file_path);
     auto file_extension = path.extension().string();
-    if (std::find(SUPPORTED_IMAGE_FORMATS.begin(), SUPPORTED_IMAGE_FORMATS.end(), file_extension) !=
+    if (std::find(SUPPORTED_IMAGE_FORMATS.begin(), SUPPORTED_IMAGE_FORMATS.end(), file_extension) ==
         SUPPORTED_IMAGE_FORMATS.end()) {
         error_not_supported_image_type(file_extension);
     }
