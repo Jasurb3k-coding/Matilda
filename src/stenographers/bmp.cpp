@@ -21,18 +21,27 @@ void BMPImage::encrypt(const std::string &message) {
     validate_written_image(message);
 }
 
-void BMPImage::validate_message(const std::string &message) {
+void BMPImage::validate_message(const std::string &message) const {
     is_valid_message(message);
     if (message.length() > max_secret_chars) {
         error_message_too_long(message.length(), max_secret_chars);
     };
 }
 
+void BMPImage::check_for_secret_message() const {
+    get_LSB_string_from_pixel_data();
+};
+
+
 std::string BMPImage::decrypt() {
     auto lsb = get_LSB_string_from_pixel_data();
     auto message = get_string_from_bitset(lsb);
     return message;
 }
+
+void BMPImage::check_if_message_can_be_written(const std::string &message) const {
+    validate_message(message);
+};
 
 
 int BMPImage::get_max_secret_characters() const {
@@ -100,7 +109,7 @@ bool is_last_char_supported(const std::string &result) {
     return isalnum(character) || isspace(character) || is_eol_char;
 }
 
-std::string BMPImage::get_LSB_string_from_pixel_data() {
+std::string BMPImage::get_LSB_string_from_pixel_data() const {
     std::string result = "";
     auto color = 0;
     for (int i = 0; i < pixel_data.size();) {

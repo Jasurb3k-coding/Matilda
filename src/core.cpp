@@ -19,8 +19,8 @@ auto get_info_about_image(const std::vector<std::string> &args) -> void {
 auto encrypt_message_into_picture(const std::vector<std::string> &args) -> void {
     validate_number_of_arguments(args, 2);
     const std::string &image_path = args[0];
-    validate_image_path(image_path, std::ios::out | std::ios::in);
     const std::string &message = args[1];
+    validate_image_path(image_path, std::ios::out | std::ios::in);
     encrypt_message(image_path, message);
 }
 
@@ -33,4 +33,8 @@ auto decrypt_message_from_picture(const std::vector<std::string> &args) -> void 
 
 auto check(const std::vector<std::string> &args) -> void {
     validate_number_of_arguments(args, 2);
+    const std::string &image_path = args[0];
+    const std::string &message = args[1];
+    validate_image_path(image_path, std::ios::out | std::ios::in);
+    check_message(image_path, message);
 }

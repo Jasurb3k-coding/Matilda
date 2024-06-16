@@ -36,6 +36,10 @@ struct BMPImage {
 
     int get_max_secret_characters() const;
 
+    void check_if_message_can_be_written(const std::string &message) const;
+
+    void check_for_secret_message() const;
+
     void encrypt(const std::string &message);
 
     std::string decrypt();
@@ -46,13 +50,18 @@ private:
     std::vector<std::array<int, 4>> pixel_data{};
 
     static auto get_bitset_from_string(const std::string &input) -> std::string;
-    std::string get_LSB_string_from_pixel_data();
-    auto get_string_from_bitset(const std::string& binaryString) -> std::string;
+
+    std::string get_LSB_string_from_pixel_data() const;
+
+    auto get_string_from_bitset(const std::string &binaryString) -> std::string;
 
     int replaceLSBs(int &value, const std::string &bitmap_str);
+
     void write_encrypted_message_into_pixels(std::string &encrypted);
+
     void validate_written_image(const std::string &expected_message);
-    void validate_message(const std::string &message);
+
+    void validate_message(const std::string &message) const;
 
     bool is_rgb{};
     uint32_t pixels_starting_position{};

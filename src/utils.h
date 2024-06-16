@@ -24,6 +24,8 @@ void is_valid_message(const std::string &message);
 
 auto get_image_dimensions(const std::string &file_path) -> std::pair<int, int>;
 
+void check_message(const std::string &file_path, const std::string &message);
+
 template<typename TP>
 tm *to_local_time(TP tp);
 

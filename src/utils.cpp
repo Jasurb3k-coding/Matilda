@@ -91,6 +91,15 @@ void decrypt_message(const std::string &file_path) {
     fmt::println("{}", message);
 }
 
+void check_message(const std::string &file_path, const std::string &message) {
+    auto path = std::filesystem::path(file_path);
+    auto bmp_image = BMPImage(path);
+    bmp_image.check_if_message_can_be_written(message);
+    fmt::println("{}", green_text("Message can be written"));
+    bmp_image.check_for_secret_message();
+    fmt::println("{}", green_text("There can be a secret message"));
+}
+
 template<typename TP>
 tm *to_local_time(TP tp) {
     using namespace std::chrono;
@@ -101,7 +110,7 @@ tm *to_local_time(TP tp) {
 }
 
 void is_valid_message(const std::string &message) {
-    auto result =  find_if(
+    auto result = find_if(
             message.begin(),
             message.end(),
             [](char c) {
