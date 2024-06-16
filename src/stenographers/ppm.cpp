@@ -193,6 +193,5 @@ void PPMImage::persist_pixels() {
 }
 
 std::fstream PPMImage::open_file(const int &mode) {
-//    fmt::println("{}", get_file_path());
     return std::fstream(file_path, mode | std::ios::binary);
 }

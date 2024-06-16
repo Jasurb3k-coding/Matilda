@@ -66,7 +66,7 @@ auto error_not_supported_characters() -> void {
 
 
 auto error_message_too_long(const int &provided_message_size, const int &max_message_size) -> void {
-    auto need_to_remove = max_message_size - provided_message_size;
+    auto need_to_remove = provided_message_size - max_message_size;
     auto message = fmt::format(
             "The message is too long ({} characters). Max character count is {} characters. Please remove {} characters",
             provided_message_size, max_message_size, need_to_remove);
