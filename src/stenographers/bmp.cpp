@@ -2,6 +2,7 @@
 #include <fstream>
 #include "bmp.h"
 #include "../exceptions.h"
+#include "../utils.h"
 #include <string>
 #include <algorithm>
 #include <fmt/ostream.h>
@@ -14,10 +15,18 @@ BMPImage::BMPImage(const std::string &filePath) : file_path(filePath) {
 
 
 void BMPImage::encrypt(const std::string &message) {
+    validate_message(message);
     auto encrypted_message = get_bitset_from_string(message);
     write_encrypted_message_into_pixels(encrypted_message);
     persist_pixels();
     validate_written_image(message);
+}
+
+void BMPImage::validate_message(const std::string &message) {
+    is_valid_message(message);
+    if (message.length() > max_secret_chars){
+        error_message_too_long(message.length(), max_secret_chars);
+    };
 }
 
 std::string BMPImage::decrypt() {

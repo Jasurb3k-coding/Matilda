@@ -7,6 +7,8 @@ enum EXCEPTION_CODE {
     FILE_DOES_NOT_EXIST = 3,
     NOT_A_REGULAR_FILE = 4,
     WRITE_FAILED = 5,
+    NOT_SUPPORTED_CHARACTERS = 6,
+    MESSAGE_TOO_LONG = 7,
 };
 
 auto try_help_text = "Use -h to see available commands.";
@@ -51,4 +53,21 @@ auto error_write_failed() -> void {
     auto message = fmt::format("There has been an error while writing the message");
     println_red(message);
     exit(WRITE_FAILED);
+}
+
+auto error_not_supported_characters() -> void {
+    auto message = fmt::format(
+            "The provided message has unsupported characters. You can only decrypt alpha-numeric and whitespace characters");
+    println_red(message);
+    exit(NOT_SUPPORTED_CHARACTERS);
+}
+
+
+auto error_message_too_long(const int &provided_message_size, const int &max_message_size) -> void {
+    auto need_to_remove = max_message_size - provided_message_size;
+    auto message = fmt::format(
+            "The message is too long ({} characters). Max character count is {} characters. Please remove {} characters",
+            provided_message_size, max_message_size, need_to_remove);
+    println_red(message);
+    exit(MESSAGE_TOO_LONG);
 }

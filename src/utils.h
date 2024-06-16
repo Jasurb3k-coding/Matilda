@@ -20,6 +20,8 @@ void encrypt_message(const std::string &file_path, const std::string &message);
 
 void decrypt_message(const std::string &file_path);
 
+void is_valid_message(const std::string &message);
+
 auto get_image_dimensions(const std::string &file_path) -> std::pair<int, int>;
 
 template<typename TP>

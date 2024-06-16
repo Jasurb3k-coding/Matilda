@@ -89,6 +89,7 @@ void decrypt_message(const std::string &file_path) {
     fmt::println("{}", green_text("Message Decrypted Successfully. Message:"));
     fmt::println("{}", message);
 }
+
 template<typename TP>
 tm *to_local_time(TP tp) {
     using namespace std::chrono;
@@ -96,6 +97,17 @@ tm *to_local_time(TP tp) {
     std::time_t tt = system_clock::to_time_t(sctp);
     auto local_time = std::localtime(&tt);
     return local_time;
+}
+
+void is_valid_message(const std::string &message) {
+    auto result =  find_if(
+            message.begin(),
+            message.end(),
+            [](char c) {
+                return !(isalnum(c) || isspace(c));
+            }
+    );
+    if (result == message.end()) error_not_supported_characters();
 }
 
 auto print_help() -> void {

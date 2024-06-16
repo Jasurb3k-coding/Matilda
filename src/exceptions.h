@@ -13,3 +13,7 @@ auto error_file_does_not_have_permission(const std::string &file_path) -> void;
 auto error_not_supported_image_type(const std::string &image_type) -> void;
 
 auto error_write_failed() -> void;
+
+auto error_not_supported_characters() -> void;
+
+auto error_message_too_long(const int &provided_message_size, const int &max_message_size) -> void;
