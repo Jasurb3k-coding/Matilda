@@ -48,6 +48,8 @@ private:
     auto get_string_from_bitset(const std::string& binaryString) -> std::string;
 
     int replaceLSBs(int &value, const std::string &bitmap_str);
+    void write_encrypted_message_into_pixels(std::string &encrypted);
+    void validate_written_image(const std::string &expected_message);
 
     bool is_rgb{};
     uint32_t pixels_starting_position{};
@@ -57,7 +59,7 @@ private:
     int max_secret_chars{};
     int color_count{};
 
-    void write_pixels();
+    void persist_pixels();
 
 
     void read_bmp();
